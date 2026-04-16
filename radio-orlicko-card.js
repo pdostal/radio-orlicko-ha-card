@@ -110,21 +110,12 @@ class RadioOrlickoCard extends HTMLElement {
     const albumArt = attrs.entity_picture || "";
     const currentShow = attrs.current_show || "";
     const currentHost = attrs.current_host || "";
-    const playcount = attrs.lastfm_playcount;
-    const listeners = attrs.lastfm_listeners;
 
     const metaLine = [artist, album].filter(Boolean).join(" · ");
 
     const showLine = [currentShow, currentHost ? `(${currentHost})` : ""]
       .filter(Boolean)
       .join(" ");
-
-    const statsLine = [
-      playcount ? `▶ ${this._formatNumber(playcount)}` : "",
-      listeners ? `👤 ${this._formatNumber(listeners)}` : "",
-    ]
-      .filter(Boolean)
-      .join("  ");
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -155,7 +146,7 @@ class RadioOrlickoCard extends HTMLElement {
 
         .main-row {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           gap: 10px;
           padding: 8px 12px 6px;
         }
@@ -228,13 +219,6 @@ class RadioOrlickoCard extends HTMLElement {
           white-space: nowrap;
         }
 
-        .stats-col {
-          font-size: 10px;
-          color: var(--text-secondary);
-          white-space: nowrap;
-          opacity: 0.7;
-        }
-
         .progress-bar {
           height: 3px;
           background: var(--progress-bg);
@@ -267,7 +251,6 @@ class RadioOrlickoCard extends HTMLElement {
               <div class="time-col">
                 <span id="orlicko-elapsed">0:00</span>${this._duration != null ? ` / <span id="orlicko-duration">0:00</span>` : ""}
               </div>
-              ${statsLine ? `<div class="stats-col">${this._escapeHtml(statsLine)}</div>` : ""}
             </div>
           </div>
           <div class="progress-bar">
@@ -369,14 +352,6 @@ class RadioOrlickoCard extends HTMLElement {
     const m = Math.floor(s / 60);
     const rem = s % 60;
     return `${m}:${String(rem).padStart(2, "0")}`;
-  }
-
-  _formatNumber(n) {
-    const num = parseInt(n, 10);
-    if (isNaN(num)) return String(n);
-    if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
-    if (num >= 1_000) return `${(num / 1_000).toFixed(1)}k`;
-    return String(num);
   }
 
   _escapeHtml(str) {
