@@ -249,7 +249,7 @@ class RadioOrlickoCard extends HTMLElement {
             </div>
             <div class="right-col">
               <div class="time-col">
-                <span id="orlicko-elapsed">0:00</span>${this._duration != null ? ` / <span id="orlicko-duration">0:00</span>` : ""}
+                <span id="orlicko-elapsed">0:00</span>
               </div>
             </div>
           </div>
@@ -327,10 +327,7 @@ class RadioOrlickoCard extends HTMLElement {
 
     const fill = this.shadowRoot.getElementById("orlicko-progress");
     const elapsedEl = this.shadowRoot.getElementById("orlicko-elapsed");
-    const durationEl = this.shadowRoot.getElementById("orlicko-duration");
-
     if (elapsedEl) elapsedEl.textContent = this._formatTime(clamped);
-    if (durationEl && this._duration != null) durationEl.textContent = this._formatTime(this._duration);
 
     if (fill) {
       if (this._duration != null && this._duration > 0) {
