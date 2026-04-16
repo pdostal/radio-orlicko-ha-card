@@ -17,8 +17,10 @@ class RadioOrlickoCard extends HTMLElement {
     this._positionBase = null;
     this._positionBaseTime = null;
     this._duration = null;
-    this._lastTitle = null;
+    this._lastTitle = undefined;
     this._lastShow = undefined;
+    this._unavailableRendered = false;
+    this._entityUnavailableRendered = false;
   }
 
   // ------------------------------------------------------------------ //
@@ -38,9 +40,29 @@ class RadioOrlickoCard extends HTMLElement {
     const state = hass.states[entityId];
 
     if (!state) {
-      this._renderUnavailable();
+      if (!this._unavailableRendered) {
+        this._unavailableRendered = true;
+        this._lastTitle = undefined;
+        this._lastShow = undefined;
+        this._renderUnavailable(entityId);
+      }
       return;
     }
+
+    // Entity found — clear unavailable flag so it re-renders cleanly if it was gone
+    this._unavailableRendered = false;
+
+    if (state.state === "unavailable") {
+      if (!this._entityUnavailableRendered) {
+        this._entityUnavailableRendered = true;
+        this._lastTitle = undefined;
+        this._lastShow = undefined;
+        this._renderEntityUnavailable();
+      }
+      return;
+    }
+
+    this._entityUnavailableRendered = false;
 
     const attrs = state.attributes;
     const title = attrs.media_title;
@@ -259,11 +281,24 @@ class RadioOrlickoCard extends HTMLElement {
     this._startProgressTimer();
   }
 
-  _renderUnavailable() {
+  _renderUnavailable(entityId) {
+    this._stopProgressTimer();
     this.shadowRoot.innerHTML = `
       <ha-card>
-        <div style="padding:16px;text-align:center;color:var(--secondary-text-color,#9a9ab0);">
-          Radio Orlicko není dostupné
+        <div style="padding:16px;text-align:center;color:var(--secondary-text-color,#9a9ab0);font-size:13px;line-height:1.5;">
+          <div>📻 Entity not found</div>
+          <div style="font-size:11px;margin-top:4px;opacity:0.7;">${this._escapeHtml(entityId)}</div>
+        </div>
+      </ha-card>
+    `;
+  }
+
+  _renderEntityUnavailable() {
+    this._stopProgressTimer();
+    this.shadowRoot.innerHTML = `
+      <ha-card>
+        <div style="padding:16px;text-align:center;color:var(--secondary-text-color,#9a9ab0);font-size:13px;">
+          📻 Radio Orlicko unavailable
         </div>
       </ha-card>
     `;
