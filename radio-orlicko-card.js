@@ -121,20 +121,31 @@ class RadioOrlickoCard extends HTMLElement {
       <style>
         :host {
           display: block;
-          --card-bg: var(--ha-card-background, #1a1a2e);
+          --card-bg: var(--ha-card-background, var(--card-background-color, #1a1a2e));
           --accent: var(--primary-color, #e63946);
           --text-primary: var(--primary-text-color, #e8e8f0);
           --text-secondary: var(--secondary-text-color, #9a9ab0);
-          --progress-bg: rgba(255,255,255,0.1);
+          --art-bg: rgba(255,255,255,0.06);
+          --progress-bg: rgba(255,255,255,0.12);
           --progress-fill: var(--accent);
           font-family: var(--paper-font-body1_-_font-family, sans-serif);
+        }
+
+        @media (prefers-color-scheme: light) {
+          :host {
+            --card-bg: var(--ha-card-background, var(--card-background-color, #ffffff));
+            --text-primary: var(--primary-text-color, #121217);
+            --text-secondary: var(--secondary-text-color, #54556b);
+            --art-bg: rgba(0,0,0,0.06);
+            --progress-bg: rgba(0,0,0,0.12);
+          }
         }
 
         .card {
           background: var(--card-bg);
           border-radius: var(--ha-card-border-radius, 12px);
           overflow: hidden;
-          box-shadow: var(--ha-card-box-shadow, 0 2px 12px rgba(0,0,0,0.4));
+          box-shadow: var(--ha-card-box-shadow, 0 2px 12px rgba(0,0,0,0.25));
           color: var(--text-primary);
         }
 
@@ -157,7 +168,7 @@ class RadioOrlickoCard extends HTMLElement {
           height: 40px;
           border-radius: 6px;
           overflow: hidden;
-          background: #0d0d1a;
+          background: var(--art-bg);
           display: flex;
           align-items: center;
           justify-content: center;
